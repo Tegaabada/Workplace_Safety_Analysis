@@ -19,6 +19,14 @@ SELECT [Date]
 
 GO
 
+DELETE FROM [dbo].['Workplace Safety Data$']
+WHERE Department IS NULL;
+
+ALTER TABLE [dbo].['Workplace Safety Data$']
+alter column Date DATETIME,
+alter column [Incident Cost] MONEY;
+
+
 -- Q1: How many incidents occurred at each plant?
 
 SELECT Plant,
@@ -194,5 +202,6 @@ WHERE [Incident Type] = 'Falling Object'
 GROUP BY [Age Group]
 ORDER BY [Incident Count] DESC ;
 
+--End of Queries
 
 
