@@ -1,27 +1,27 @@
-# HR Reporting SQL Project
+# Workplace Safety SQL Project
 
 ## Project Overview
 
-**Project Title**: Employee Details Analysis 
+**Project Title**: Workplace Safety Analysis 
 **Database**:`SQL DB`
-**Tech Used**: `SQL Server` `ETL Pipeline`
+**Tech Used**: `SQL Server`
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze employee data. The project involves setting up a employee database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
+This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze the dataset. The project involves setting up  Workplace safety dataset in an SQL database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
 
 ## Objectives
 
-1. **Set up a database**: Populate a database with the provided employee data data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
+1. **Set up a database**: Populate a database with the provided worksafety data.
+2. **Data Cleaning**: Identify and remove any records with wrong datasets, missing or null values.
 3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the dataset.
 
 ## Project Structure
 
 ### 1. Database Setup
 
 - **Database Set up**: The project starts by setting up on an existing database created with this code
-  ``` CREATE DATABASE [SQL_DB]; ```
-- **Table Creation**: The tables, ```[Employee Info]``` and ```[Employee position2]``` were imported via ETL pipeline.
+  ``` CREATE DATABASE [SQL DB]; ```
+- **Table Creation**: The table, ```['Workplace Safety Data$']```  was imported into the SQL server.
 
 
 ### 2. Data Cleaning
@@ -41,205 +41,212 @@ SELECT [EmpID]
       ,[Address]
       ,[DOB]
       ,[Gender]
-  FROM [dbo].['Employee Info$']
+  FROM [dbo].['Workplace Safety Data$']
 
 GO
 
+DELETE FROM [dbo].['Workplace Safety Data$']
+WHERE Department IS NULL;
 
-DELETE FROM [dbo].['Employee Info$']
-WHERE GENDER IS NULL;
-
-ALTER TABLE [dbo].['Employee Info$']
-alter column DOB DATE;
+ALTER TABLE [dbo].['Workplace Safety Data$']
+alter column Date DATETIME,
+alter column [Incident Cost] MONEY;
 ```
 
 ### 3. Exploratory Data Analysis & Findings
 
 The following SQL queries were developed to answer specific business questions:
 
--- Q1: Write a query to fetch the EmpFname from the EmployeeInfo table in the upper case and use the ALIAS name as EmpName.
+-- Q1: How many incidents occurred at each plant?
 ```sql
-SELECT UPPER(EmpFname) AS [EmpName]
-FROM [Employee Info];
+SELECT Plant,
+COUNT([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Plant];
 ```
--- Q2: Write a query to fetch the number of employees working in the department ‘HR’.
+-- Q2: What is the total incident cost per department?
 ```sql
-SELECT COUNT (*) AS [Employee Count]
-from [dbo].[Employee Info]
-WHERE [Department] = 'HR';
-```
--- Q3: Write a query to get the current date.
-```sql
-SELECT cast( GETDATE() AS date) AS [Current Date];
-```
--- Q4: Write a query to retrieve the first four characters of  EmpLname from the EmployeeInfo table.
-```sql
-SELECT LEFT (EmpLname, 4) AS FirstFourChars
-FROM [Employee Info];
-```
--- Q5: Write a query to fetch only the place name(string before brackets) from the Address column of EmployeeInfo table.
-```sql
-SELECT  LEFT(Address, CHARINDEX('(', Address) -1) AS [Place Name]
-FROM [Employee Info];
-```
--- Q6: Write a query to create a new table that consists of data and structure copied from the other table.
-```sql
-SELECT *
-INTO [Newtable]
-from [dbo].[Employee Info];
-```
--- This created a new table joining both tables into it using join via emplyee ID
-```sql
-SELECT ei.[EmpID], EI.[EmpFname],EI.[EmpLname],EI.[Department],
-EI.[Project],EI.[DOB],
-EP.[EmpPosition],EP.[DateOfJoining],EP.[Salary]
-INTO [New Emplyee Table]
-FROM [Employee Info] ei
-JOIN [dbo].[Employee position2] ep ON ei.[EmpID] = ep.[EmpID];
-```
--- Q7: Write q query to find all the employees whose salary is between 50000 to 100000.
-```sql
-SELECT EP.[EmpID],
-EI.[EmpFname] + ' ' + EI.[EmpLname] AS FULLNAME
-FROM [dbo].[Employee position2] EP
-JOIN [dbo].[Employee Info] EI ON EP.[EmpID] = EI.[EmpID]
-WHERE EP.[Salary] BETWEEN 50000 AND 100000;
-```
--- Q8: Write a query to find the names of employees that begin with ‘S’
-```sql
-SELECT [EmpFname]
-FROM [dbo].[Employee Info]
-WHERE [EmpFname] LIKE 'S%';
-```
--- Q9: Write a query to fetch top N records.
-```sql
--- TOP 5
-SELECT TOP (5) *
-FROM [dbo].[Employee position2]
-ORDER BY [Salary] DESC;
-
---TOP 10
-SELECT TOP 10 PERCENT *
-FROM [dbo].[Employee position2]
-ORDER BY [Salary] DESC;
-```
--- Q10: Write a query to retrieve the EmpFname and EmpLname in a single column as “FullName”. The first name and the last name must be separated with space.
-```sql
-SELECT [EmpFname] + ' ' + [EmpLname] AS FULLNAME
-FROM [dbo].[Employee Info];
-```
--- Q11: Write a query find number of employees whose DOB is between 02/05/1970 to 31/12/1995 and are grouped according to gender
-```sql
-SELECT COUNT ([EmpID])
-FROM [dbo].[Employee Info]
-WHERE [DOB] BETWEEN '1970/05/02' AND '1995/12/31';
-```
--- Q12: Write a query to fetch all the records from the EmployeeInfo table ordered by EmpLname in descending order and Department in the ascending order.
-```sql
-SELECT *
-FROM [dbo].[Employee Info]
-ORDER BY [EmpLname];
-```
--- Q13: Write a query to fetch details of employees whose EmpLname ends with an alphabet ‘A’ and contains five alphabets.
-```sql
-SELECT *
-FROM [dbo].[Employee Info]
-WHERE [EmpLname] LIKE '%A'
-AND LEN([EmpLname])= 5;
-```
--- Q14: Write a query to fetch details of all employees excluding the employees with first names, “Sanjay” and “Sonia” from the EmployeeInfo table.
-```sql
-SELECT * FROM [dbo].[Employee Info]
-WHERE [EmpFname] NOT IN ('Sanjay', 'Sonia')
-
-
-SELECT * FROM [dbo].[Employee Info]
-WHERE [EmpFname] != 'Sanjay' AND [EmpFname] != 'Sonia'
-```
--- Q15: Write a query to fetch details of employees with the address as “DELHI(DEL)”
-```sql
-SELECT * FROM [dbo].[Employee Info]
-WHERE [Address] = 'DELHI(DEL)';
-```
--- Q16: Write a query to fetch all employees who also hold the managerial position.
-```sql
-SELECT * FROM [dbo].[Employee position2]
-WHERE [EmpPosition] = 'Manager';
-
---This query used the Join function
-
-SELECT 
-ei.[EmpFname] + ' ' + ei.[EmpLname] AS FULLNAME, ep.*
-FROM [dbo].[Employee position2] ep
-JOIN [dbo].[Employee Info] EI ON EP.[EmpID] = EI.[EmpID]
-WHERE [EmpPosition] = 'Manager';
-```
--- Q17: Write a query to fetch the department-wise count of employees sorted by department’s count in ascending order
-```sql
-SELECT [Department],COUNT([EmpID]) AS EmployeeCount
-from [dbo].[Employee Info]
+SELECT Department,
+SUM([Incident Cost]) As [Incident Cost Per Department]
+FROM [dbo].['Workplace Safety Data$']
 GROUP BY Department
-ORDER BY EmployeeCount ASC;
+ORDER BY [Incident Cost Per Department] DESC;
 ```
--- Q18: Write a query to fecth Male employees in HR department
+-- Q3: Which incident type resulted in the highest total days lost?
 ```sql
-SELECT * FROM [dbo].[Employee Info]
-WHERE [Gender] = 'M' AND [Department] = 'HR';
+SELECT TOP(1) [Incident Type],
+SUM ([Days Lost]) AS [Total Days Lost] 
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Incident Type]
+ORDER BY [Total Days Lost] DESC;
 ```
--- Q19: Write a SQL query to retrieve employee details from EmployeeInfo table who have a date of joining in the EmployeePosition table
+-- Q4: What is the distribution of incident types by shift?
 ```sql
--- Option 1
-
-SELECT * FROM [dbo].[Employee Info] EI
-WHERE EXISTS (
-    SELECT 1
-    FROM [dbo].[Employee position2] EP
-    WHERE EP.EmpID = EI.EmpID
-      AND EP.DateOfJoining IS NOT NULL)
-
--- Option 2:
-
-SELECT EI.*
-FROM [dbo].[Employee Info] EI
-LEFT JOIN [dbo].[Employee position2] EP ON EI.EmpID = EP.EmpID
-WHERE EP.DateOfJoining IS NOT NULL;
+SELECT Shift, [Incident Type], 
+COUNT([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Shift, [Incident Type]
+ORDER BY Shift, [Incident Type];
 ```
-
--- Q20: Write a query to retrieve two minimum and maximum salaries from the EmployeePosition table
+-- Q5: What is the average incident cost for each injury location?
 ```sql
-SELECT Salary
-FROM (SELECT TOP 2 Salary
-    FROM [dbo].[Employee position2]
-    ORDER BY Salary ASC) AS MinSalaries
-
-UNION
-
-SELECT Salary
-FROM (SELECT TOP 2 Salary
-    FROM [dbo].[Employee position2]
-    ORDER BY Salary DESC) AS MaxSalaries;
+SELECT [Injury Location],
+AVG([Incident Cost]) AS [Incident Average]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Injury Location]
 ```
+-- Q6: Which age group has the highest number of incidents?
+```sql
+SELECT TOP (1) [Age Group],
+COUNT([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Age Group]
+ORDER BY [Incident Count] DESC;
+```
+-- Q7: How many incidents were reported as 'Lost Time' by each plant?
+```sql
+SELECT Plant,
+COUNT ([Incident Type]) AS [Lost Time Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Report Type] = 'Lost Time'
+GROUP BY Plant
+ORDER BY [Lost Time Incident Count] DESC;
+```
+-- Q8: Which department had the highest number of 'Crush & Pinch' incidents?
+```sql
+SELECT TOP (1)
+Department,
+COUNT ([Incident Type]) AS [Crush & Pinch Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Incident Type] = 'Crush & Pinch'
+GROUP BY Department
+ORDER BY [Crush & Pinch Incident Count] DESC;
+```
+-- Q9: Which plants reported the most "Near Miss" incidents?
+```sql
+SELECT TOP (3)
+Plant, 
+COUNT([Report Type]) AS [Near Miss Count]
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Report Type] = 'Near Miss'
+GROUP BY Plant
+ORDER BY [Near Miss Count] DESC;
+```
+-- Q10: What is the total number of incidents by year and month?
+```sql
+SELECT Month, Year,
+COUNT ([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Month, Year
+ORDER BY Month, Year;
+```
+-- Q11: Which gender has the most reported incidents?
+```sql
+SELECT TOP (1)
+Gender,
+COUNT ([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Gender
+ORDER BY Gender DESC;
+ ```
+-- Q12:What is the total cost of incidents per year?
+```sql
+SELECT Year,
+SUM ([Incident Cost]) AS [Total Incident Cost]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Year
+ORDER BY [Total Incident Cost] DESC;
+```
+-- Q13: Which incident resulted in the highest cost?
+```sql
+SELECT TOP (1)
+[Incident Type],
+SUM ([Incident Cost]) AS [Total Incident Cost]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Incident Type]
+ORDER BY [Total Incident Cost] DESC;
+```
+-- Q14: What is the total cost of incidents for each report type?
+```sql
+SELECT [Report Type],
+SUM([Incident Cost]) AS [Total Incident Cost]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Report Type]
+ORDER BY [Total Incident Cost] DESC;
+```
+-- Q15: Which departments had incidents with more than 2 days lost?
+```sql
+SELECT DISTINCT Department
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Days Lost] > 2
+ORDER BY Department;
 
+SELECT Department
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Days Lost] > 2
+GROUP BY Department
+ORDER BY Department;
+```
+-- Q16: What is the average number of days lost per incident type?
+```sql
+SELECT [Incident Type],
+ROUND (AVG ([Days Lost]),2) AS [Average Days Lost]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY [Incident Type]
+ORDER BY [Average Days Lost] DESC;
+```
+-- Q17: What is the distribution of incidents by shift (Day, Afternoon, Night)?
+```sql
+SELECT Shift,  
+COUNT([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Shift
+ORDER BY [Incident Count] DESC;
+```
+-- Q18: Which months have the highest number of incidents?
+```sql
+SELECT Month,
+COUNT ([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+GROUP BY Month
+ORDER BY [Incident Count] DESC;
+ ```
+-- Q19: What is the total cost of "Vehicle" related incidents?
+```sql
+SELECT 
+[Incident Type],
+SUM ([Incident Cost]) AS [Total Cost]
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Incident Type] = 'Vehicle'
+GROUP BY [Incident Type];
+```
+-- 20: Which age group is most affected by "Falling Object" incidents?
+```sql
+SELECT TOP (1) 
+[Age Group],
+COUNT ([Incident Type]) AS [Incident Count]
+FROM [dbo].['Workplace Safety Data$']
+WHERE [Incident Type] = 'Falling Object'
+GROUP BY [Age Group]
+ORDER BY [Incident Count] DESC ;
+```
 ## Findings
 
-- **Employee Demographics**: The dataset captures employees with details such as names, DOB, gender, department, and address. Gender distribution can be analyzed and DOB ranges (Q11) show employees born between 1970–1995, allowing age-group segmentation.
-- **Departmental Insights**: The analysis shows department-wise counts, highlighting HR and other departments’ workforce sizes. Sorting by department count reveals which departments are most/least staffed.
-- **Position & Salary Analysis**: Managerial roles are identifiable, enabling leadership headcount reporting. Salary ranges (Q7, Q20) highlight employees earning between 50,000–100,000 as the min/max salary bands. Top earners can be extracted (Q9), useful for compensation benchmarking.
-- **Employee Trends**: Employees with DateOfJoining not null (Q19) show active workforce.
-
+- Incident Distribution by Plant: Each plant recorded varying numbers of incidents, with Montana showing higher risk exposure.
+- Departmental Costs: Maintenance department incurred the highest incident costs.
+- Incident Severity: Equipment incident type, caused the highest days lost.
+- Age Group Trends: 25-34 age group reported the most incidents overall.
+- Cost Drivers: Burn incident types contributed heavily to overall costs.
 
 
 ## Conclusion
-
-This project demonstrates how SQL can be applied to database setup, data cleaning, and exploratory analysis using employee information. By working with the EmployeeInfo and EmployeePosition2 tables, we were able to:
-- Standardize and clean data (removing nulls, formatting DOB, parsing addresses).
-- Generate demographic insights such as gender distribution, age ranges, and departmental counts.
-- Explore organizational structure by identifying managerial roles and department staffing levels.
-- Analyze salary trends, including ranges, top earners, and employees within specific pay bands.
-- Retrieve targeted employee details using conditions on names, addresses, and joining dates.
-
-Overall, the exercise highlights how SQL queries can uncover meaningful workforce insights, support HR reporting, and provide a foundation for business-driven decision making.
-
+This project demonstrates how SQL can be applied to workplace safety data for cleaning, aggregation, and analysis. By querying the dataset, we identified:
+- Plants with higher incident exposure, particularly Montana.
+- Departments incurring the greatest financial burden, with Maintenance leading.
+- Incident types driving operational disruption, such as equipment-related cases with high days lost.
+- Demographic patterns, with the 25–34 age group most affected.
+- Cost drivers, where burn incidents significantly increased overall expenses.
+Overall, the analysis highlights how SQL queries can uncover critical safety insights, enabling organizations to prioritize risk reduction strategies, target high-cost incident types, and strengthen preventive measures across plants and departments.
 
 
 #### Author - Tega Abada
