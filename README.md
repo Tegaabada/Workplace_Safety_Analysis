@@ -4,7 +4,7 @@
 
 **Project Title**: Workplace Safety Analysis 
 **Database**:`SQL DB`
-**Tech Used**: `SQL Server`
+**Tech Stack**:![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=flat&logo=microsoftsqlserver&logoColor=white)
 
 This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze the dataset. The project involves setting up  Workplace safety dataset in an SQL database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
 
